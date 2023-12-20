@@ -5,7 +5,9 @@ import com.yeeiee.exception.BasicException;
 import org.apache.flink.api.common.RuntimeExecutionMode;
 
 public interface Flow {
-    RuntimeExecutionMode runtimeMode();
+    default RuntimeExecutionMode runtimeMode() {
+        return RuntimeExecutionMode.STREAMING;
+    }
 
     void run(Context context) throws BasicException;
 }

@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * 测试使用
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

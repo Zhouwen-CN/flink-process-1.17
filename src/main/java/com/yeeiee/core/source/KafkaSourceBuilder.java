@@ -1,7 +1,6 @@
 package com.yeeiee.core.source;
 
 import com.yeeiee.core.context.Context;
-import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
@@ -15,7 +14,6 @@ public abstract class KafkaSourceBuilder<IN> implements SourceBuilder<IN> {
 
     protected abstract DeserializationSchema<IN> deserializer();
 
-
     @Override
     public DataStream<IN> build(Context context) {
         KafkaSource<IN> kafkaSource = KafkaSource.<IN>builder()
@@ -27,6 +25,6 @@ public abstract class KafkaSourceBuilder<IN> implements SourceBuilder<IN> {
                 .build();
 
         return context.getDataStream()
-                .fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "kafka-source");
+                .fromSource(kafkaSource, watermark(), "kafka-source");
     }
 }
