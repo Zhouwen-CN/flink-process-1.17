@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.val;
-import org.apache.flink.api.common.RuntimeExecutionMode;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.contrib.streaming.state.EmbeddedRocksDBStateBackend;
@@ -60,48 +59,57 @@ public final class JobConfig {
 
 
     public void setCheckpointStorage(String checkpointStorage) {
-        if (checkpointStorage != null)
+        if (checkpointStorage != null) {
             this.checkpointStorage = checkpointStorage;
+        }
     }
 
     public void setCheckpointMode(CheckpointingMode checkpointMode) {
-        if (checkpointMode != null)
+        if (checkpointMode != null) {
             this.checkpointMode = checkpointMode;
+        }
     }
 
     public void setCheckpointInterval(Long checkpointInterval) {
-        if (checkpointInterval != null)
+        if (checkpointInterval != null) {
             this.checkpointInterval = checkpointInterval;
+        }
     }
 
     public void setCheckpointTimeout(Long checkpointTimeout) {
-        if (checkpointTimeout != null)
+        if (checkpointTimeout != null) {
             this.checkpointTimeout = checkpointTimeout;
+        }
     }
 
     public void setMinPauseBetweenCheckpoints(Long minPauseBetweenCheckpoints) {
-        if (minPauseBetweenCheckpoints != null)
+        if (minPauseBetweenCheckpoints != null) {
             this.minPauseBetweenCheckpoints = minPauseBetweenCheckpoints;
+        }
     }
 
     public void setMaxConcurrentCheckpoints(Integer maxConcurrentCheckpoints) {
-        if (maxConcurrentCheckpoints != null)
+        if (maxConcurrentCheckpoints != null) {
             this.maxConcurrentCheckpoints = maxConcurrentCheckpoints;
+        }
     }
 
     public void setTolerableCheckpointFailureNumber(Integer tolerableCheckpointFailureNumber) {
-        if (tolerableCheckpointFailureNumber != null)
+        if (tolerableCheckpointFailureNumber != null) {
             this.tolerableCheckpointFailureNumber = tolerableCheckpointFailureNumber;
+        }
     }
 
     public void setStateBackend(StateBackend stateBackend) {
-        if (stateBackend != null)
+        if (stateBackend != null) {
             this.stateBackend = stateBackend;
+        }
     }
 
     public void setRestartStrategy(RestartStrategies.FailureRateRestartStrategyConfiguration restartStrategy) {
-        if (restartStrategy != null)
+        if (restartStrategy != null) {
             this.restartStrategy = restartStrategy;
+        }
     }
 
     public static JobConfig getJobConfig(@NonNull String jobName, JobConfig jobConfig) {

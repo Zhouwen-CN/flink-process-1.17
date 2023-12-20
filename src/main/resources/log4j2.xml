@@ -20,12 +20,13 @@
         <console name="Console" target="SYSTEM_OUT">
             <!--PatternLayout :输出日志的格式-->
             <PatternLayout pattern="${LOG_PATTERN}"/>
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
         </console>
         <RollingFile name="RollingFileInfo" fileName="${LOG_HOME}/${LOG_MODULE_NAME}-${LOG_INFO_LEVEL}.log"
                      filePattern="${LOG_HOME}/$${date:yyyy-MM}/${LOG_MODULE_NAME}-${LOG_INFO_LEVEL}-%d{yyyy-MM-dd}-%i.log">
             <!--ThresholdFilter :日志输出过滤-->
             <!--如果是error级别拒绝，设置 onMismatch="NEUTRAL" 可以让日志经过后续的过滤器-->
-            <ThresholdFilter level="${LOG_ERROR_LEVEL}" onMatch="DENY" onMismatch="NEUTRAL"/>
+            <!-- <ThresholdFilter level="${LOG_ERROR_LEVEL}" onMatch="DENY" onMismatch="NEUTRAL"/> -->
             <!--level="info" :日志级别,onMatch="ACCEPT" :级别在info之上则接受,onMismatch="DENY" :级别在info之下则拒绝-->
             <ThresholdFilter level="${LOG_INFO_LEVEL}" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>

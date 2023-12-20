@@ -8,11 +8,11 @@ import lombok.val;
 import org.apache.flink.streaming.api.datastream.DataStream;
 
 public abstract class AbstractSingleFlow<IN, OUT> extends AbstractFlow {
-    protected abstract SourceBuilder<IN> source() throws BasicException;
+    protected abstract SourceBuilder<IN> source();
 
-    public abstract SinkBuilder<OUT> sink() throws BasicException;
+    public abstract SinkBuilder<OUT> sink();
 
-    public abstract DataStream<OUT> transform(DataStream<IN> input) throws BasicException;
+    public abstract DataStream<OUT> transform(DataStream<IN> input);
 
     @Override
     public void run(Context context) throws BasicException {

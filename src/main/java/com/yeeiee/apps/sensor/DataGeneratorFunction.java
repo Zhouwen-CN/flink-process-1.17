@@ -8,8 +8,10 @@ import java.util.Random;
 public class DataGeneratorFunction implements GeneratorFunction<Long, WaterSensor> {
     private final Random random;
     private final int maxOutOfOrderSecond;
-    // mock id list
-    public static final String[] ids = new String[]{"北京", "上海", "广州", "深圳"};
+    /**
+     * mock id list
+     */
+    public static final String[] IDS = new String[]{"北京", "上海", "广州", "深圳"};
 
     public DataGeneratorFunction(int maxOutOfOrderSecond) {
         this.maxOutOfOrderSecond = maxOutOfOrderSecond;
@@ -23,12 +25,12 @@ public class DataGeneratorFunction implements GeneratorFunction<Long, WaterSenso
     }
 
     private String getId() {
-        val index = random.nextInt(ids.length);
-        return ids[index];
+        val index = random.nextInt(IDS.length);
+        return IDS[index];
     }
 
     @Override
-    public WaterSensor map(Long aLong) throws Exception {
+    public WaterSensor map(Long aLong) {
         val id = getId();
         val ts = getTs();
         return new WaterSensor(id, ts, aLong);

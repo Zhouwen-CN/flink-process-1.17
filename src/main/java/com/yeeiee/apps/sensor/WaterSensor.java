@@ -11,10 +11,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WaterSensor {
-    // 水位传感器类型
+    /**
+     * 水位传感器类型
+     */
     public String id;
-    // 传感器记录时间戳
+    /**
+     * 传感器记录时间戳
+     */
     public Long ts;
-    // 传感器记录值
+    /**
+     * 传感器记录值
+     */
     public Long vc;
 }
