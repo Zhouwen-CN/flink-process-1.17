@@ -6,12 +6,7 @@ import com.yeeiee.exception.BasicException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
-/**
- * Hello world!
- */
 @Slf4j
 public class Launch {
     public static void main(String[] args) throws BasicException {
@@ -22,10 +17,12 @@ public class Launch {
         val classFullName = parameterTool.get("main");
         try {
             val clazz = Class.forName(classFullName);
+            val flow = (Flow) clazz.newInstance();
+            val runtimeMode = flow.runtimeMode();
             val context = Context.builder()
                     .setJobClass(clazz)
+                    .setRuntimeMode(runtimeMode)
                     .build();
-            val flow = (Flow) clazz.newInstance();
             flow.run(context);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             throw new BasicException(e.getMessage());

@@ -5,8 +5,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import java.util.Random;
-
 /**
  * Unit test for simple App.
  */
@@ -36,13 +34,5 @@ public class AppTest extends TestCase {
                 .build();
 
         assertNotNull(build);
-    }
-
-    public void testRandom(){
-        Random random = new Random();
-        for (int i = 0; i < 500; i++) {
-            System.out.println(random.nextInt(5));
-        }
-
     }
 }

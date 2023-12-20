@@ -19,14 +19,11 @@ public final class JobConfig {
     public JobConfig(@NonNull String jobName) {
         this.checkpointStorage = DEFAULT_CHECKPOINT_STORAGE_PATH_PREFIX + jobName;
     }
+
     /**
      * 检查点保存位置
      */
     private @Getter String checkpointStorage;
-    /**
-     * 运行模式
-     */
-    private @Getter RuntimeExecutionMode runtimeMode = RuntimeExecutionMode.STREAMING;
     /**
      * 检查点模式
      */
@@ -65,11 +62,6 @@ public final class JobConfig {
     public void setCheckpointStorage(String checkpointStorage) {
         if (checkpointStorage != null)
             this.checkpointStorage = checkpointStorage;
-    }
-
-    public void setRuntimeMode(RuntimeExecutionMode runtimeMode) {
-        if (runtimeMode != null)
-            this.runtimeMode = runtimeMode;
     }
 
     public void setCheckpointMode(CheckpointingMode checkpointMode) {
@@ -117,7 +109,6 @@ public final class JobConfig {
             return new JobConfig(jobName);
         }
         val config = new JobConfig(jobName);
-        config.setRuntimeMode(jobConfig.getRuntimeMode());
         config.setCheckpointMode(jobConfig.getCheckpointMode());
         config.setCheckpointInterval(jobConfig.getCheckpointInterval());
         config.setCheckpointStorage(jobConfig.getCheckpointStorage());

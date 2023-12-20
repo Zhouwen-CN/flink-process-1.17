@@ -4,6 +4,7 @@ import com.yeeiee.core.context.Context;
 import com.yeeiee.exception.BasicException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.flink.api.common.RuntimeExecutionMode;
 import org.apache.flink.api.dag.Transformation;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.transformations.LegacySinkTransformation;
@@ -12,7 +13,7 @@ import org.apache.flink.table.operations.ModifyOperation;
 import java.util.List;
 
 @Slf4j
-public abstract class AbstractFlow implements Flow{
+public abstract class AbstractFlow implements Flow {
     protected void submit(Context context) throws BasicException {
         try {
             val name = context.getJobName();
