@@ -1,5 +1,6 @@
 package com.yeeiee.core.bean;
 
+import lombok.Getter;
 import lombok.val;
 import org.apache.flink.connector.datagen.source.GeneratorFunction;
 
@@ -9,7 +10,8 @@ public abstract class AbstractDataGenFunction<IN> implements GeneratorFunction<L
     /**
      * 最大乱序时间
      */
-    protected final int maxOutOfOrderSecond;
+    protected @Getter
+    final int maxOutOfOrderSecond;
     protected final Random random;
 
     protected AbstractDataGenFunction(int maxOutOfOrderSecond) {

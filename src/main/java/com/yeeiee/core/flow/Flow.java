@@ -1,7 +1,7 @@
 package com.yeeiee.core.flow;
 
 import com.yeeiee.core.context.Context;
-import com.yeeiee.exception.BasicException;
+import com.yeeiee.core.context.FlowConfig;
 import org.apache.flink.api.common.RuntimeExecutionMode;
 
 public interface Flow {
@@ -23,5 +23,13 @@ public interface Flow {
         return RuntimeExecutionMode.STREAMING;
     }
 
-    void run(Context context) throws BasicException;
+    /**
+     * 任务配置对象
+     * @return default null
+     */
+    default FlowConfig flowConfig() {
+        return null;
+    }
+
+    void run(Context context);
 }

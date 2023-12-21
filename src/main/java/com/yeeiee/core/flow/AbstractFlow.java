@@ -19,9 +19,9 @@ public abstract class AbstractFlow implements Flow {
             val name = context.getJobName();
             log.info("context will submit with name: {}", name);
             context.getTableStream().getConfig().getConfiguration().setString("pipeline.name", name);
-            // 只有业务使用过flink StatementSet sql的时候才 执行
+            // 只有业务使用过flink StatementSet sql的时候才执行
             ifPresentStatementSetExecute(context);
-            // 只有dataStream级别,有addSink|sinkTo操作才会执行避免sql和dataStream混合开发，提交多余的执行链
+            // 只有dataStream级别, 有addSink|sinkTo操作才会执行避免sql和dataStream混合开发, 提交多余的执行链
             ifPresentSinkExecute(context);
         } catch (Exception e) {
             throw new BasicException("context submit error", e);
@@ -47,7 +47,7 @@ public abstract class AbstractFlow implements Flow {
         if (transformations != null && !transformations.isEmpty()) {
             val count = transformations.stream().filter(transformation -> transformation instanceof LegacySinkTransformation || transformation instanceof SinkTransformation).count();
             if (count > 0) {
-                log.info("LegacySinkTransformation size is {} dataStream execute", count);
+                log.info("transformations size is {} dataStream execute", count);
                 context.getDataStream().execute(context.getJobName());
             }
         }

@@ -11,20 +11,21 @@ import org.apache.flink.api.java.utils.ParameterTool;
 public class Launch {
     public static void main(String[] args) throws BasicException {
         val parameterTool = ParameterTool.fromArgs(args);
-        if (!parameterTool.has("main")) {
-            throw new BasicException("Could not find the --main parameter");
+        if (!parameterTool.has("flow")) {
+            throw new BasicException("Could not find the --flow parameter");
         }
-        val classFullName = parameterTool.get("main");
+        val classFullName = parameterTool.get("flow");
         try {
             val clazz = Class.forName(classFullName);
             val flow = (Flow) clazz.newInstance();
             val runtimeMode = flow.runtimeMode();
-            int parallelism = flow.parallelism();
+            val parallelism = flow.parallelism();
+            val flowConfig = flow.flowConfig();
             val context = Context.builder()
                     .setJobClass(clazz)
                     .setRuntimeMode(runtimeMode)
                     .setParallelism(parallelism)
-                    .build();
+                    .build(flowConfig);
             flow.run(context);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             throw new BasicException(e.getMessage());

@@ -1,7 +1,8 @@
 package com.yeeiee.apps.kafka;
 
-import com.yeeiee.apps.sensor.WaterSensorDataGenFunction;
 import com.yeeiee.apps.sensor.WaterSensor;
+import com.yeeiee.apps.sensor.WaterSensorDataGenFunction;
+import com.yeeiee.core.bean.AbstractDataGenFunction;
 import com.yeeiee.core.flow.AbstractSingleFlow;
 import com.yeeiee.core.sink.KafkaSinkBuilder;
 import com.yeeiee.core.sink.SinkBuilder;
@@ -12,7 +13,6 @@ import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SerializationSchema;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.base.DeliveryGuarantee;
-import org.apache.flink.connector.datagen.source.GeneratorFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;
 
 public class KafkaSinkFlowTest extends AbstractSingleFlow<WaterSensor, String> {
@@ -20,9 +20,8 @@ public class KafkaSinkFlowTest extends AbstractSingleFlow<WaterSensor, String> {
     @Override
     protected SourceBuilder<WaterSensor> source() {
         return new DataGenSourceBuilder<WaterSensor>() {
-
             @Override
-            protected GeneratorFunction<Long, WaterSensor> generatorFunction() {
+            protected AbstractDataGenFunction<WaterSensor> generatorFunction() {
                 return new WaterSensorDataGenFunction(5);
             }
         };
@@ -48,7 +47,7 @@ public class KafkaSinkFlowTest extends AbstractSingleFlow<WaterSensor, String> {
 
             @Override
             protected DeliveryGuarantee deliveryGuarantee() {
-                return DeliveryGuarantee.EXACTLY_ONCE;
+                return DeliveryGuarantee.AT_LEAST_ONCE;
             }
         };
     }

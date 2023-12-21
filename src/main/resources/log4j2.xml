@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL-->
+<!--日志级别以及优先级排序(从低到高): ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF-->
 <!--status="WARN" :用于设置log4j2自身内部日志的信息输出级别，默认是OFF-->
 <!--monitorInterval="30"  :间隔秒数,自动检测配置文件的变更和重新配置本身-->
-<!--<configuration status="WARN" monitorInterval="30">-->
-<configuration>
+<configuration status="WARN">
     <Properties>
         <!--自定义一些常量，之后使用${变量名}引用-->
         <Property name="LOG_HOME">./logs</Property>
@@ -20,15 +19,12 @@
         <console name="Console" target="SYSTEM_OUT">
             <!--PatternLayout :输出日志的格式-->
             <PatternLayout pattern="${LOG_PATTERN}"/>
-            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
         </console>
         <RollingFile name="RollingFileInfo" fileName="${LOG_HOME}/${LOG_MODULE_NAME}-${LOG_INFO_LEVEL}.log"
                      filePattern="${LOG_HOME}/$${date:yyyy-MM}/${LOG_MODULE_NAME}-${LOG_INFO_LEVEL}-%d{yyyy-MM-dd}-%i.log">
             <!--ThresholdFilter :日志输出过滤-->
-            <!--如果是error级别拒绝，设置 onMismatch="NEUTRAL" 可以让日志经过后续的过滤器-->
-            <!-- <ThresholdFilter level="${LOG_ERROR_LEVEL}" onMatch="DENY" onMismatch="NEUTRAL"/> -->
-            <!--level="info" :日志级别,onMatch="ACCEPT" :级别在info之上则接受,onMismatch="DENY" :级别在info之下则拒绝-->
-            <ThresholdFilter level="${LOG_INFO_LEVEL}" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!--只接受error级别以下的日志-->
+            <ThresholdFilter level="${LOG_ERROR_LEVEL}" onMatch="DENY" onMismatch="ACCEPT"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <!-- Policies :日志滚动策略-->
             <Policies>
@@ -43,6 +39,7 @@
 
         <RollingFile name="RollingFileError" fileName="${LOG_HOME}/${LOG_MODULE_NAME}-${LOG_ERROR_LEVEL}.log"
                      filePattern="${LOG_HOME}/$${date:yyyy-MM}/${LOG_MODULE_NAME}-${LOG_ERROR_LEVEL}-%d{yyyy-MM-dd}-%i.log">
+            <!--只直接error和error级别以上的日志-->
             <ThresholdFilter level="${LOG_ERROR_LEVEL}" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>

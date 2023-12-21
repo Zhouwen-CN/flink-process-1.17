@@ -16,6 +16,7 @@ public class Context {
     private final StreamExecutionEnvironment dataStream;
     private final StreamTableEnvironment tableStream;
     private final StatementSet statementSet;
+    private FlowConfig flowConfig;
 
     private Context(String jobName, StreamExecutionEnvironment dataStream, StreamTableEnvironment tableStream, StatementSet statementSet) {
         this.jobName = jobName;
@@ -47,16 +48,13 @@ public class Context {
             return this;
         }
 
-        public Context build() {
-            return build(null);
-        }
-
-        public Context build(JobConfig jobConfig) {
-            val config = JobConfig.getJobConfig(this.jobName, jobConfig);
-            log.info("Use jobConfig: {}", config);
+        public Context build(FlowConfig flowConfig) {
+            val config = FlowConfig.mergeFlowConfig(this.jobName, flowConfig);
+            log.info("Use context flowConfig: {}", config);
             val dataStream = StreamExecutionEnvironment.getExecutionEnvironment();
             dataStream.setParallelism(this.parallelism);
             dataStream.setRuntimeMode(this.runtimeMode);
+            // checkpoint
             dataStream.enableCheckpointing(config.getCheckpointInterval());
             val checkpointConfig = dataStream.getCheckpointConfig();
             checkpointConfig.setCheckpointingMode(config.getCheckpointMode());
@@ -65,12 +63,18 @@ public class Context {
             checkpointConfig.setMinPauseBetweenCheckpoints(config.getMinPauseBetweenCheckpoints());
             checkpointConfig.setMaxConcurrentCheckpoints(config.getMaxConcurrentCheckpoints());
             checkpointConfig.setTolerableCheckpointFailureNumber(config.getTolerableCheckpointFailureNumber());
+            checkpointConfig.setExternalizedCheckpointCleanup(config.getCheckpointCleanup());
+            checkpointConfig.enableUnalignedCheckpoints(config.isEnableUnalignedCheckpoint());
+            checkpointConfig.setAlignedCheckpointTimeout(config.getAlignedCheckpointTimeout());
+            // state backend
             dataStream.setStateBackend(config.getStateBackend());
+            // restart strategy
             dataStream.setRestartStrategy(config.getRestartStrategy());
             val tableStream = StreamTableEnvironment.create(dataStream);
             val statementSet = tableStream.createStatementSet();
-            log.info("Use context initial success");
-            return new Context(this.jobName, dataStream, tableStream, statementSet);
+            val context = new Context(this.jobName, dataStream, tableStream, statementSet);
+            context.flowConfig = config;
+            return context;
         }
     }
 

@@ -8,6 +8,7 @@ import com.yeeiee.core.source.SourceBuilder;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.kafka.common.IsolationLevel;
 
 public class KafkaSourceFlowTest extends AbstractSingleFlow<String, String> {
     @Override
@@ -26,6 +27,11 @@ public class KafkaSourceFlowTest extends AbstractSingleFlow<String, String> {
             @Override
             protected DeserializationSchema<String> deserializer() {
                 return new SimpleStringSchema();
+            }
+
+            @Override
+            protected IsolationLevel isolationLevel() {
+                return IsolationLevel.READ_UNCOMMITTED;
             }
         };
     }
