@@ -19,9 +19,11 @@ public class Launch {
             val clazz = Class.forName(classFullName);
             val flow = (Flow) clazz.newInstance();
             val runtimeMode = flow.runtimeMode();
+            int parallelism = flow.parallelism();
             val context = Context.builder()
                     .setJobClass(clazz)
                     .setRuntimeMode(runtimeMode)
+                    .setParallelism(parallelism)
                     .build();
             flow.run(context);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {

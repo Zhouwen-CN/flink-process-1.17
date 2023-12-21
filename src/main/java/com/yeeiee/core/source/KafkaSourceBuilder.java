@@ -8,10 +8,19 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 
 public abstract class KafkaSourceBuilder<IN> implements SourceBuilder<IN> {
 
+    /**
+     * @return kafka bootstrap servers
+     */
     protected abstract String bootstrapServers();
 
-    protected abstract String topics();
+    /**
+     * @return kafka topic
+     */
+    protected abstract String topic();
 
+    /**
+     * @return kafka deserializer
+     */
     protected abstract DeserializationSchema<IN> deserializer();
 
     @Override
@@ -19,7 +28,7 @@ public abstract class KafkaSourceBuilder<IN> implements SourceBuilder<IN> {
         KafkaSource<IN> kafkaSource = KafkaSource.<IN>builder()
                 .setBootstrapServers(bootstrapServers())
                 .setGroupId(context.getJobName())
-                .setTopics(topics())
+                .setTopics(topic())
                 .setValueOnlyDeserializer(deserializer())
                 .setStartingOffsets(OffsetsInitializer.latest())
                 .build();
@@ -27,4 +36,6 @@ public abstract class KafkaSourceBuilder<IN> implements SourceBuilder<IN> {
         return context.getDataStream()
                 .fromSource(kafkaSource, watermark(), "kafka-source");
     }
+
+
 }

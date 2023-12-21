@@ -6,6 +6,11 @@ import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.streaming.api.datastream.DataStream;
 
 public interface SourceBuilder<IN> {
+    /**
+     * flink 水印
+     *
+     * @return default none
+     */
     default WatermarkStrategy<IN> watermark() {
         return WatermarkStrategy.noWatermarks();
     }

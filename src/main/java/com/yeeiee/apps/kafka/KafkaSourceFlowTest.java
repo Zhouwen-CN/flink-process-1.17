@@ -15,11 +15,11 @@ public class KafkaSourceFlowTest extends AbstractSingleFlow<String, String> {
         return new KafkaSourceBuilder<String>() {
             @Override
             protected String bootstrapServers() {
-                return "192.168.135.110:9092";
+                return "127.0.0.1:9092";
             }
 
             @Override
-            protected String topics() {
+            protected String topic() {
                 return "test";
             }
 

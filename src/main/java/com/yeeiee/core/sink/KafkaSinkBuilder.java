@@ -11,13 +11,25 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
 public abstract class KafkaSinkBuilder<OUT> implements SinkBuilder<OUT> {
-
+    /**
+     * @return kafka bootstrap servers
+     */
     protected abstract String bootstrapServers();
 
-    protected abstract String topics();
+    /**
+     * @return kafka topic
+     */
+    protected abstract String topic();
+
+    /**
+     * @return kafka serializer
+     */
 
     protected abstract SerializationSchema<OUT> serializer();
 
+    /**
+     * @return 传输保证, 精准一次|至少一次
+     */
     protected abstract DeliveryGuarantee deliveryGuarantee();
 
     @Override
@@ -27,7 +39,7 @@ public abstract class KafkaSinkBuilder<OUT> implements SinkBuilder<OUT> {
                 .setBootstrapServers(bootstrapServers())
                 .setRecordSerializer(
                         KafkaRecordSerializationSchema.<OUT>builder()
-                                .setTopic(topics())
+                                .setTopic(topic())
                                 .setValueSerializationSchema(serializer())
                                 .build()
                 )

@@ -13,7 +13,6 @@ import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 @Getter
 public class Context {
     private final String jobName;
-
     private final StreamExecutionEnvironment dataStream;
     private final StreamTableEnvironment tableStream;
     private final StatementSet statementSet;
@@ -28,6 +27,7 @@ public class Context {
     public static class ContextBuilder {
         private String jobName;
         private RuntimeExecutionMode runtimeMode;
+        private int parallelism;
 
         private ContextBuilder() {
         }
@@ -42,16 +42,20 @@ public class Context {
             return this;
         }
 
+        public ContextBuilder setParallelism(int parallelism) {
+            this.parallelism = parallelism;
+            return this;
+        }
 
         public Context build() {
             return build(null);
         }
 
         public Context build(JobConfig jobConfig) {
-            val jobName = this.jobName;
-            val config = JobConfig.getJobConfig(jobName, jobConfig);
+            val config = JobConfig.getJobConfig(this.jobName, jobConfig);
             log.info("Use jobConfig: {}", config);
             val dataStream = StreamExecutionEnvironment.getExecutionEnvironment();
+            dataStream.setParallelism(this.parallelism);
             dataStream.setRuntimeMode(this.runtimeMode);
             dataStream.enableCheckpointing(config.getCheckpointInterval());
             val checkpointConfig = dataStream.getCheckpointConfig();
@@ -65,8 +69,8 @@ public class Context {
             dataStream.setRestartStrategy(config.getRestartStrategy());
             val tableStream = StreamTableEnvironment.create(dataStream);
             val statementSet = tableStream.createStatementSet();
-            log.info("context init success");
-            return new Context(jobName, dataStream, tableStream, statementSet);
+            log.info("Use context initial success");
+            return new Context(this.jobName, dataStream, tableStream, statementSet);
         }
     }
 

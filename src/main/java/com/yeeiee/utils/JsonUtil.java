@@ -13,6 +13,13 @@ public class JsonUtil {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .build();
 
+    /**
+     * 将java对象转换为json字符串
+     *
+     * @param obj 需要转换的java对象
+     * @return json 字符串
+     * @throws JsonProcessingException parse failed
+     */
     public String toJsonString(Object obj) throws JsonProcessingException {
         return jsonMapper.writeValueAsString(obj);
     }

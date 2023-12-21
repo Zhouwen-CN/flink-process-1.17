@@ -15,7 +15,7 @@ public final class JobConfig {
     // todo require hdfs path, recent use local path
     private static final String DEFAULT_CHECKPOINT_STORAGE_PATH_PREFIX = "file:///D:\\tmp\\flink\\";
 
-    public JobConfig(@NonNull String jobName) {
+    public JobConfig(String jobName) {
         this.checkpointStorage = DEFAULT_CHECKPOINT_STORAGE_PATH_PREFIX + jobName;
     }
 
