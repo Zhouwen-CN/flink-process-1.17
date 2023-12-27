@@ -1,5 +1,6 @@
 package com.yeeiee.core.context;
 
+import com.yeeiee.core.catalog.CatalogConstant;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,9 @@ import org.apache.flink.api.common.RuntimeExecutionMode;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.StatementSet;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import org.apache.flink.table.catalog.Catalog;
+
+import java.util.Map;
 
 @Slf4j
 @Getter
@@ -74,8 +78,20 @@ public class Context {
             val statementSet = tableStream.createStatementSet();
             val context = new Context(this.jobName, dataStream, tableStream, statementSet);
             context.flowConfig = config;
+            // register catalogs
+            context.registerCatalogs();
             return context;
         }
+    }
+
+    private void registerCatalogs() {
+        val catalogs = CatalogConstant.catalogs;
+        val tableStream = this.tableStream;
+        for (Map.Entry<String, Catalog> entry : catalogs.entrySet()) {
+            tableStream.registerCatalog(entry.getKey(), entry.getValue());
+        }
+        tableStream.getCatalog("default_catalog")
+                .ifPresent(catalog -> catalogs.put("default_catalog", catalog));
     }
 
     public static ContextBuilder builder() {

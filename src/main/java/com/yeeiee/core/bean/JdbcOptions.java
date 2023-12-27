@@ -5,6 +5,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
+@Deprecated
 public class JdbcOptions {
     /**
      * 驱动全类名
