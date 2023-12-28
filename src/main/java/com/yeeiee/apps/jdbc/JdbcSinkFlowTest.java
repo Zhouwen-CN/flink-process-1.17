@@ -3,7 +3,7 @@ package com.yeeiee.apps.jdbc;
 import com.yeeiee.apps.sensor.WaterSensor;
 import com.yeeiee.apps.sensor.WaterSensorDataGenFunction;
 import com.yeeiee.core.bean.AbstractDataGenFunction;
-import com.yeeiee.core.catalog.CatalogConstant;
+import com.yeeiee.core.bean.JdbcOptions;
 import com.yeeiee.core.flow.AbstractSingleFlow;
 import com.yeeiee.core.sink.JdbcSinkBuilder;
 import com.yeeiee.core.sink.SinkBuilder;
@@ -25,15 +25,14 @@ public class JdbcSinkFlowTest extends AbstractSingleFlow<WaterSensor, WaterSenso
     @Override
     public SinkBuilder<WaterSensor> sink() {
         return new JdbcSinkBuilder<WaterSensor>() {
-
             @Override
-            public String catalog() {
-                return CatalogConstant.jdbcCatalog.getName();
-            }
-
-            @Override
-            public String databaseWithTableName() {
-                return "chen_test.water_sensor1";
+            public JdbcOptions jdbcOptions() {
+                return new JdbcOptions()
+                        .setDriverName("com.mysql.cj.jdbc.Driver")
+                        .setUrl("jdbc:mysql://127.0.0.1:3306/chen_test")
+                        .setUsername("root")
+                        .setPassword("123")
+                        .setTableName("water_sensor1");
             }
         };
     }

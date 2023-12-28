@@ -88,10 +88,10 @@ public class Context {
         val catalogs = CatalogConstant.catalogs;
         val tableStream = this.tableStream;
         for (Map.Entry<String, Catalog> entry : catalogs.entrySet()) {
-            tableStream.registerCatalog(entry.getKey(), entry.getValue());
+            val catalogName = entry.getKey();
+            tableStream.registerCatalog(catalogName, entry.getValue());
+            log.info("Registered catalog: {}", catalogName);
         }
-        tableStream.getCatalog("default_catalog")
-                .ifPresent(catalog -> catalogs.put("default_catalog", catalog));
     }
 
     public static ContextBuilder builder() {

@@ -10,14 +10,18 @@ public interface CatalogTable {
      *
      * @return default_catalog
      */
-    String catalog();
+    default String catalog() {
+        return "default_catalog";
+    }
 
     /**
      * database
      *
      * @return default_database
      */
-    String databaseWithTableName();
+    default String database() {
+        return "default_database";
+    }
 
     /**
      * 是否合并sink
@@ -33,21 +37,18 @@ public interface CatalogTable {
      */
     @SneakyThrows(BasicException.class)
     default void validate() {
-        val catalogs = CatalogConstant.catalogs;
-        val currentCatalog = this.catalog();
-        if (catalogs.containsKey(currentCatalog)) {
-            val catalog = catalogs.get(currentCatalog);
-            val currentDatabaseWithTableName = this.databaseWithTableName();
-            if (!currentDatabaseWithTableName.contains(".")) {
-                throw new BasicException("DatabaseWithTableName require type database.tableName, but " + currentDatabaseWithTableName);
-            }
-            val currentDatabase = currentDatabaseWithTableName.split("\\.")[0];
-            if (!catalog.databaseExists(currentDatabase)) {
-                throw new BasicException("Can not find database " + currentDatabase + " in " + catalog);
-            }
-        } else {
-            throw new BasicException("Can not find catalog " + currentCatalog);
+        val catalogName = this.catalog();
+        if ("default_catalog".equals(catalogName)) {
+            return;
         }
-
+        val catalogs = CatalogConstant.catalogs;
+        if (!catalogs.containsKey(catalogName)) {
+            throw new BasicException("Can not find catalog: " + catalogName);
+        }
+        val currentCatalog = catalogs.get(catalogName);
+        val databaseName = this.database();
+        if (!currentCatalog.databaseExists(databaseName)) {
+            throw new BasicException("Can not find database " + databaseName + " in " + catalogName);
+        }
     }
 }

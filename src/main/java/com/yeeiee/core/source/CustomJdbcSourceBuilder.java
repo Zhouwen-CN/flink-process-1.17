@@ -1,16 +1,13 @@
 package com.yeeiee.core.source;
 
-import com.yeeiee.core.catalog.CatalogConstant;
-import com.yeeiee.core.catalog.CatalogTable;
+import com.yeeiee.core.bean.JdbcOptions;
 import com.yeeiee.core.context.Context;
 import com.yeeiee.exception.BasicException;
 import com.yeeiee.utils.ReflectUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import lombok.var;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.connector.jdbc.catalog.JdbcCatalog;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;
 
@@ -21,20 +18,16 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public abstract class CustomJdbcSourceBuilder<IN> extends RichParallelSourceFunction<IN> implements SourceBuilder<IN>, CatalogTable {
+public abstract class CustomJdbcSourceBuilder<IN> extends RichParallelSourceFunction<IN> implements SourceBuilder<IN> {
+    /**
+     * @return jdbc 连接信息
+     */
+    public abstract JdbcOptions jdbcOptions();
+
     /**
      * @return 查询间隔, 秒
      */
-    protected abstract Integer interval();
-
-    /**
-     * 连接参数, 因为 catalog 里面的 baseUrl不能加参数
-     *
-     * @return 默认为空
-     */
-    protected String connectParam() {
-        return null;
-    }
+    public abstract Integer interval();
 
     private boolean isRunning = true;
 
@@ -48,19 +41,8 @@ public abstract class CustomJdbcSourceBuilder<IN> extends RichParallelSourceFunc
     // 字段列表
     private String stringFields;
 
-    private String getFullConnectUrl(String baseUrl) {
-        val databaseWithTableName = this.databaseWithTableName();
-        val databaseName = databaseWithTableName.split("\\.")[0];
-        var connectParam = this.connectParam();
-        connectParam = connectParam == null || connectParam.trim().isEmpty() ? "" : "&" + connectParam;
-        return baseUrl + databaseName + connectParam;
-    }
-
     @Override
     public void open(Configuration parameters) throws Exception {
-        // 校验
-        this.validate();
-
         // 所有字段都需要有set方法
         superClassGeneric = ReflectUtil.getSuperClassT(this);
         if (!ReflectUtil.checkBeanHasSetMethods(superClassGeneric)) {
@@ -68,27 +50,17 @@ public abstract class CustomJdbcSourceBuilder<IN> extends RichParallelSourceFunc
         }
 
         // 获取字段列表, 字段列表不能为空
-        val fieldList = ReflectUtil.getFieldNames(superClassGeneric);
+        val fieldList = ReflectUtil.getKeyFieldNames(superClassGeneric).f1;
         if (fieldList.isEmpty()) {
             throw new BasicException("Use CustomJdbcSource the field of a generic object cannot be empty");
         }
         stringFields = String.join(", ", fieldList);
 
-        // 获取当前的catalog
-        val catalog = CatalogConstant.catalogs.get(this.catalog());
-        if (!(catalog instanceof JdbcCatalog)) {
-            throw new BasicException("Use CustomJdbcSource the catalog require JdbcCatalog");
-        }
-        val jdbcCatalog = ((JdbcCatalog) catalog);
-        val internal = jdbcCatalog.getInternal();
-
-        // 从catalog中获取连接信息
-        val baseUrl = internal.getBaseUrl();
-        val username = internal.getUsername();
-        val password = internal.getPassword();
-        val fullConnectUrl = this.getFullConnectUrl(baseUrl);
-        log.info("Use CustomJdbcSource config: url={}, username={}, password={}, tableName={}", fullConnectUrl, username, password, this.databaseWithTableName());
-        connection = DriverManager.getConnection(fullConnectUrl, username, password);
+        // 创建jdbc连接
+        val jdbcOptions = jdbcOptions();
+        log.info("Use CustomJdbcSource config: {}", jdbcOptions);
+        Class.forName(jdbcOptions.getDriverName());
+        connection = DriverManager.getConnection(jdbcOptions.getUrl(), jdbcOptions.getUsername(), jdbcOptions.getPassword());
         countDownLatch = new CountDownLatch(1);
     }
 
@@ -97,7 +69,8 @@ public abstract class CustomJdbcSourceBuilder<IN> extends RichParallelSourceFunc
     public void run(SourceContext<IN> sourceContext) throws Exception {
         while (isRunning) {
             val statement = connection.createStatement();
-            val querySql = "select " + stringFields + " from " + this.databaseWithTableName();
+            val tableName = jdbcOptions().getTableName();
+            val querySql = "select " + stringFields + " from " + tableName;
 
             val resultSet = statement.executeQuery(querySql);
             val metaData = resultSet.getMetaData();

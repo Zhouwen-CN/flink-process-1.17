@@ -8,7 +8,6 @@ import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.java.tuple.Tuple2;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -39,22 +38,11 @@ public class ReflectUtil {
     }
 
     /**
-     * 反射获取 字段名列表
-     *
-     * @param clazz Class 对象
-     * @return field list
-     */
-    public List<String> getFieldNames(Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
-    }
-
-    /**
      * 反射获取 主键名列表 和 字段名列表
      *
      * @param clazz Class 对象
      * @return tuple2
      */
-    @Deprecated
     public Tuple2<List<String>, List<String>> getKeyFieldNames(Class<?> clazz) {
         val keyNames = new ArrayList<String>();
         val fieldNames = new ArrayList<String>();

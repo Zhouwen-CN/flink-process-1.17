@@ -1,7 +1,6 @@
 package com.yeeiee.utils;
 
 import lombok.experimental.UtilityClass;
-import lombok.val;
 import org.apache.flink.shaded.guava30.com.google.common.base.CaseFormat;
 
 @UtilityClass
@@ -39,14 +38,12 @@ public class CommonUtil {
     /**
      * 获取完整的 catalog.database.tableName
      *
-     * @param catalogName           catalog 名称
-     * @param databaseWithTableName 库名.表明
+     * @param catalogName  catalog
+     * @param databaseName 库名
+     * @param tableName    表名
      * @return full table name
      */
-    public String getFullTableName(String catalogName, String databaseWithTableName) {
-        val split = databaseWithTableName.split("\\.");
-        val databaseName = split[0];
-        val tableName = split[1];
+    public String getFullTableName(String catalogName, String databaseName, String tableName) {
         return String.format("`%s`.`%s`.`%s`", catalogName, databaseName, tableName);
     }
 }
